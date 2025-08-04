@@ -128,7 +128,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.CR_PAT }}
       - name: Sign the published Docker image
         run: |
           DIGEST=$(cat digest.txt)
