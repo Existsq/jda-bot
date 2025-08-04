@@ -1,0 +1,15 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: k8s-practise-bot
+  main:
+    banner-mode: off
+
+bot:
+  token: ${BOT_TOKEN}
+  intents:
+    - GUILD_MESSAGES
+    - MESSAGE_CONTENT
+    - GUILD_MEMBERS
