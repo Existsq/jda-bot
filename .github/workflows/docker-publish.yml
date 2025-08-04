@@ -95,13 +95,17 @@ jobs:
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      - name: Write tags to file
-        run: echo "${{ steps.meta.outputs.tags }}" > tags.txt
-      - name: Upload tags artifact
+      - name: Write tags and digest to file
+        run: |
+          echo "${{ steps.meta.outputs.tags }}" > tags.txt
+          echo "${{ steps.build-and-push.outputs.digest }}" > digest.txt
+      - name: Upload tags and digest artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: tags-artifact
-          path: tags.txt
+          name: image-info
+          path: |
+            tags.txt
+            digest.txt
 
   sign-docker-image:
     runs-on: ubuntu-latest
@@ -111,16 +115,23 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - name: Download tags artifact
+      - name: Download image info artifacts
         uses: actions/download-artifact@v4
         with:
-          name: tags-artifact
+          name: image-info
       - name: Install cosign
         uses: sigstore/cosign-installer@v3.5.0
         with:
           cosign-release: 'v2.2.4'
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@v3.0.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
       - name: Sign the published Docker image
         run: |
+          DIGEST=$(cat digest.txt)
           while read -r tag; do
-            cosign sign --yes "$tag"
+            cosign sign --yes "${tag}@${DIGEST}"
           done < tags.txt
