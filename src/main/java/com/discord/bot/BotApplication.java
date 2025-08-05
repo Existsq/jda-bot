@@ -8,7 +8,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @SpringBootApplication
 @EnableConfigurationProperties(BotProperties.class)
-@EnableAspectJAutoProxy
 public class BotApplication {
 
   public static void main(String[] args) {
