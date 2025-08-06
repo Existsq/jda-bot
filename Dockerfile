@@ -1,8 +1,15 @@
-FROM eclipse-temurin:21 AS app-build
-ENV RELEASE=21
+FROM maven:3.9.6-eclipse-temurin-21 AS build
+WORKDIR /app
 
+COPY pom.xml .
+COPY src ./src
+
+RUN mvn clean package -DskipTests
+
+FROM eclipse-temurin:21 AS app-build
 WORKDIR /opt/build
-COPY target/*.jar application.jar
+
+COPY --from=build /app/target/*.jar application.jar
 
 RUN java -Djarmode=tools -jar application.jar extract  --layers --launcher
 

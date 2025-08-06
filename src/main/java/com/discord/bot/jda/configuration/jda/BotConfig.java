@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @RequiredArgsConstructor
-public class BotConfiguration {
+public class BotConfig {
 
   private final BotProperties botProperties;
 
