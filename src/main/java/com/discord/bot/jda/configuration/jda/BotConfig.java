@@ -1,6 +1,8 @@
-package com.discord.bot.jda.configuration;
+package com.discord.bot.jda.configuration.jda;
 
 import java.util.List;
+
+import com.discord.bot.jda.configuration.BotProperties;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
