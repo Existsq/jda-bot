@@ -35,7 +35,8 @@ class WelcomeCommandAdapter(private val channel: TextChannel, private val messag
         }
     }
 
-    // Вспомогательная функция для скачивания изображения
+    //TODO ВРЕМЕННО!
+    // для скачивания изображения
     private fun downloadImage(urlString: String): ByteArray {
         val url = URL(urlString)
         val connection = url.openConnection() as HttpURLConnection
