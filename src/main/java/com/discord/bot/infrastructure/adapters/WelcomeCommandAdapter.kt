@@ -2,14 +2,18 @@ package com.discord.bot.infrastructure.adapters
 
 import com.discord.bot.domain.command.Command
 import com.discord.bot.domain.entities.WelcomeMessageEntity
+import lombok.extern.slf4j.Slf4j
 import net.dv8tion.jda.api.EmbedBuilder
-import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
 import net.dv8tion.jda.api.utils.FileUpload
+import org.slf4j.LoggerFactory
 import java.net.HttpURLConnection
 import java.net.URL
 
 class WelcomeCommandAdapter(private val channel: TextChannel, private val message: WelcomeMessageEntity) : Command {
+
+    private val log = LoggerFactory.getLogger(WelcomeCommandAdapter::class.java)
+
     override fun execute() {
         if (message.imageUrl == null) {
             channel.sendMessage(message.content).queue()
@@ -29,7 +33,7 @@ class WelcomeCommandAdapter(private val channel: TextChannel, private val messag
                     .addFiles(fileUpload)
                     .queue()
             } catch (e: Exception) {
-                println("Error sending image: ${e.message}")
+                log.error("Error sending image: {}", e.message)
                 channel.sendMessage(message.content).queue()
             }
         }
