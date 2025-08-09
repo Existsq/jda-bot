@@ -1,9 +1,10 @@
 package com.discord.bot.domain.entities
 
+// Сущность приветственного сообщения
 data class WelcomeMessageEntity(
-    val content: String,
+    override val content: String,
     val imageUrl: String? = null
-) {
+): MessageEntity(content) {
     init {
         require(content.isNotBlank()) { "Welcome message cannot be blank" }
 

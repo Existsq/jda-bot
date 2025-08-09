@@ -1,23 +1,31 @@
 package com.discord.bot.infrastructure.listeners
 
-import com.discord.bot.application.useCases.SendWelcomeUseCase
+import com.discord.bot.application.command.WelcomeCommand
+import com.discord.bot.domain.command.Command
+import com.discord.bot.domain.command.Invoker
 import com.discord.bot.domain.entities.WelcomeMessageEntity
-import com.discord.bot.infrastructure.adapters.WelcomeCommandAdapter
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
-import org.springframework.stereotype.Component
 
-@Component
-class GuildMemberJoinListener : ListenerAdapter() {
+class GuildMemberJoinListener(private val commands: List<Command>) : ListenerAdapter(), Invoker {
 
     override fun onGuildMemberJoin(event: GuildMemberJoinEvent) {
-        val welcomeChannel = event.guild.getTextChannelById("1401992915840012350") ?: return
+        // добавляем имя пользователя и фото в entity
+        // TODO: сделать динамичным
+        commands.forEach { command ->
+            if (command is WelcomeCommand) {
+                val dynamicMessage = WelcomeMessageEntity(
+                    "Welcome to the server, ${event.user.name}!",
+                    "https://i.pinimg.com/originals/b5/90/b2/b590b2ed84ff824dd6276fe56b901c13.jpg"
+                )
+                command.setMessage(dynamicMessage)
+            }
+        }
 
-        val baseMessage = WelcomeMessageEntity("Welcome to the server, {user}!")
-        val personalizedMessage = baseMessage.personalize(event.user.name).withImage("https://i.pinimg.com/originals/b5/90/b2/b590b2ed84ff824dd6276fe56b901c13.jpg")
-        val command = WelcomeCommandAdapter(welcomeChannel, personalizedMessage)
-        val useCase = SendWelcomeUseCase(command)
+        invoke()
+    }
 
-        useCase.invoke()
+    override fun invoke() {
+        commands.forEach { it.execute() }
     }
 }
