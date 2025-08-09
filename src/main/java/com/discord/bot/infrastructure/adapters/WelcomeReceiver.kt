@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Lazy
 
+// Получатель Adapter для отправки приветственных сообщений
 class WelcomeReceiver(
     private val channelId: String
 ) : MessageReceiver {
